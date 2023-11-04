@@ -18,7 +18,7 @@ CSFML_FLAGS += -lcsfml-audio
 CFLAGS += $(CSFML_FLAGS)
 
 # ↓ Binaries
-NAME := ramBouncer
+NAME := infiniteBalls
 
 # Source files
 VPATH := src

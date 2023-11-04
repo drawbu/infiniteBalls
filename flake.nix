@@ -1,5 +1,5 @@
 {
-  description = "ramBouncer";
+  description = "infiniteBalls";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
@@ -53,7 +53,7 @@
 
         formatter = pkgs.nixpkgs-fmt;
         packages = {
-          default = mkCApp "ramBouncer";
+          default = mkCApp "infiniteBalls";
         };
       });
 }

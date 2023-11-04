@@ -1,6 +1,6 @@
 # Binaries
 *.out
-ramBouncer
+infiniteBalls
 
 # Compilation
 .build/
