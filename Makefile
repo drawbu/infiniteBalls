@@ -7,6 +7,7 @@ CFLAGS += -Wcast-qual
 CFLAGS += -Wunreachable-code
 CFLAGS += -U_FORTIFY_SOURCE
 CFLAGS += -iquote ./include
+CFLAGS += -Ofast -march=native -mtune=native -flto
 
 # ↓ CSFML
 CSFML_FLAGS := -lm
