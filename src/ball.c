@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <SFML/Graphics.h>
 
@@ -18,10 +19,8 @@ void ball_free(ball_t *ball)
 }
 
 static
-ball_t *ball_create(ball_t *ball, sfVector2f pos)
+ball_t *ball_create(ball_t *ball, sfVector2f pos, sfColor color)
 {
-    sfColor color = { 100, 250, 50, 255 };
-
     if (ball == NULL)
         return NULL;
     ball->circle = sfCircleShape_create();
@@ -62,19 +61,26 @@ void ball_render(uint32_t index, game_t *game)
 void add_ball(game_t *game)
 {
     sfVector2f pos;
+    sfColor color = {
+        .r = rand() % 256,
+        .g = rand() % 256,
+        .b = rand() % 256,
+        .a = 255,
+    };
 
     if (game == NULL)
         return;
     pos.x = rand() % game->videoMode.width;
-    pos.y = 1 + rand() % 20;
+    pos.y = rand() % 20 + 1;
     game->count += 1;
+    printf("%d\tballs\n", game->count);
     if (game->count > game->allocated) {
         game->allocated += 10;
         game->balls = reallocarray(game->balls, game->allocated, sizeof(ball_t));
     }
     if (game->balls == NULL)
         return;
-    ball_create(game->balls + game->count - 1, pos);
+    ball_create(game->balls + game->count - 1, pos, color);
 }
 
 void balls_render(game_t *game)
