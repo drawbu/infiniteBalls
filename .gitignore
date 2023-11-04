@@ -1,0 +1,22 @@
+# Binaries
+*.out
+ramBouncer
+
+# Compilation
+.build/
+*.a
+*.o
+include/my.h
+include/my_printf.h
+
+# Editors junk
+*~
+\#*#
+*.swp
+*.swo
+
+# Reports
+core.*
+*.log
+*.gcda
+*.gcno
