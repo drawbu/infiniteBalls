@@ -44,8 +44,12 @@ void ball_render(ball_t *ball, game_t *game)
     sfVector2f pos = sfCircleShape_getPosition(ball->circle);
     float radius = sfCircleShape_getRadius(ball->circle);
 
-    if (pos.y + radius >= game->videoMode.height || pos.y <= 0)
+    if (pos.y <= 0)
         ball->speed = -ball->speed;
+    else if (pos.y + radius >= game->videoMode.height) {
+        ball->speed = -ball->speed;
+        add_ball(game);
+    }
     pos.y += ball->speed;
     sfCircleShape_setPosition(ball->circle, pos);
     sfRenderWindow_drawCircleShape(game->window, ball->circle, NULL);
@@ -65,7 +69,7 @@ void add_ball(game_t *game)
     }
     if (game->balls == NULL)
         return;
-    ball_create(game->balls, 100);
+    ball_create(game->balls + game->count - 1, 100);
 }
 
 void balls_render(game_t *game)
