@@ -20,19 +20,25 @@ void handle_events(sfRenderWindow *window)
 
 int main(void)
 {
-    sfVideoMode mode = {800, 600, 32};
-    sfUint32 style = sfClose;
-    sfRenderWindow* window = sfRenderWindow_create(mode, "game", style, NULL);
-    ball_t *ball = ball_create(100);
+    game_t game = {
+        .videoMode = { 800, 600, 32 },
+        .videoStyle = sfClose,
+        .window = NULL,
+        .balls = NULL,
+        .count = 0,
+        .allocated = 0,
+    };
 
-    if (!window)
+    game.window = sfRenderWindow_create(game.videoMode, "game", game.videoStyle, NULL);
+    if (game.window == NULL)
         return EXIT_FAILURE;
-    while (sfRenderWindow_isOpen(window)) {
-        handle_events(window);
-        sfRenderWindow_clear(window, sfBlack);
-        render_ball(ball, window);
-        sfRenderWindow_display(window);
+    add_ball(&game);
+    while (sfRenderWindow_isOpen(game.window)) {
+        handle_events(game.window);
+        sfRenderWindow_clear(game.window, sfBlack);
+        balls_render(&game);
+        sfRenderWindow_display(game.window);
     }
-    sfRenderWindow_destroy(window);
+    sfRenderWindow_destroy(game.window);
     return EXIT_SUCCESS;
 }

@@ -7,17 +7,30 @@
 #include "SFML/Graphics/CircleShape.h"
 #include "game.h"
 
-ball_t *ball_create(uint32_t x)
+static
+void ball_free(ball_t *ball)
 {
-    ball_t *ball = malloc(sizeof(ball_t));
+    if (ball == NULL)
+        return;
+    if (ball->circle != NULL)
+        sfCircleShape_destroy(ball->circle);
+    free(ball);
+    return;
+}
+
+static
+ball_t *ball_create(ball_t *ball, uint32_t x)
+{
     sfVector2f pos = { x, 20 };
     sfColor color = { 100, 250, 50, 255 };
 
     if (ball == NULL)
         return NULL;
     ball->circle = sfCircleShape_create();
-    if (ball->circle == NULL)
-        return free_ball(ball);
+    if (ball->circle == NULL) {
+        ball_free(ball);
+        return NULL;
+    }
     ball->speed = 0.05;
     sfCircleShape_setPosition(ball->circle, pos);
     sfCircleShape_setRadius(ball->circle, 20);
@@ -25,24 +38,40 @@ ball_t *ball_create(uint32_t x)
     return ball;
 }
 
-void render_ball(ball_t *ball, sfRenderWindow *window)
+static
+void ball_render(ball_t *ball, game_t *game)
 {
     sfVector2f pos = sfCircleShape_getPosition(ball->circle);
     float radius = sfCircleShape_getRadius(ball->circle);
 
-    if (pos.y + radius >= 600 || pos.y <= 0)
+    if (pos.y + radius >= game->videoMode.height || pos.y <= 0)
         ball->speed = -ball->speed;
     pos.y += ball->speed;
     sfCircleShape_setPosition(ball->circle, pos);
-    sfRenderWindow_drawCircleShape(window, ball->circle, NULL);
+    sfRenderWindow_drawCircleShape(game->window, ball->circle, NULL);
 }
 
-null_t free_ball(ball_t *ball)
+void add_ball(game_t *game)
 {
-    if (ball == NULL)
-        return NULL;
-    if (ball->circle != NULL)
-        sfCircleShape_destroy(ball->circle);
-    free(ball);
-    return NULL;
+    if (game == NULL)
+        return;
+    game->count += 1;
+    if (game->count > game->allocated) {
+        game->allocated += 10;
+        if (game->balls == NULL)
+            game->balls = malloc(game->allocated * sizeof(ball_t));
+        else
+            game->balls = realloc(game->balls, game->allocated * sizeof(ball_t));
+    }
+    if (game->balls == NULL)
+        return;
+    ball_create(game->balls, 100);
+}
+
+void balls_render(game_t *game)
+{
+    if (game == NULL || game->balls == NULL || game->window == NULL)
+        return;
+    for (uint32_t i = 0; i < game->count; i++)
+        ball_render(game->balls + i, game);
 }

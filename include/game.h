@@ -10,10 +10,18 @@ typedef struct {
     float speed;
 } ball_t;
 
+typedef struct {
+    sfVideoMode videoMode;
+    sfUint32 videoStyle;
+    sfRenderWindow *window;
+    ball_t *balls;
+    uint32_t count;
+    uint32_t allocated;
+} game_t;
+
 typedef void * null_t;
 
-ball_t *ball_create(uint32_t x);
-void render_ball(ball_t *ball, sfRenderWindow *window);
-null_t free_ball(ball_t *ball);
+void add_ball(game_t *game);
+void balls_render(game_t *game);
 
 #endif /* BALL_H_ */
