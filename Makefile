@@ -3,7 +3,7 @@ CC := gcc -std=gnu11
 CFLAGS := -W -Wall -Wextra -Wunused -Wpedantic
 CFLAGS += -Wundef -Wshadow -Wcast-align
 CFLAGS += -Wstrict-prototypes -Wmissing-prototypes
-CFLAGS += -Waggregate-return -Wcast-qual
+CFLAGS += -Wcast-qual
 CFLAGS += -Wunreachable-code
 CFLAGS += -U_FORTIFY_SOURCE
 CFLAGS += -iquote ./include
@@ -21,7 +21,8 @@ NAME := ramBouncer
 
 # Source files
 VPATH := src
-SRC :=
+SRC := main.c
+SRC += ball.c
 
 # ↓ Objects
 BUILD_DIR := .build
