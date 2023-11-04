@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <time.h>
 
 #include <SFML/Audio.h>
 #include <SFML/Graphics.h>
@@ -29,6 +30,7 @@ int main(void)
         .allocated = 0,
     };
 
+    srand(time(NULL));
     game.window = sfRenderWindow_create(game.videoMode, "game", game.videoStyle, NULL);
     if (game.window == NULL)
         return EXIT_FAILURE;

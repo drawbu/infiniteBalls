@@ -4,7 +4,6 @@
 
 #include <SFML/Graphics.h>
 
-#include "SFML/Graphics/CircleShape.h"
 #include "game.h"
 
 static
@@ -57,8 +56,11 @@ void ball_render(ball_t *ball, game_t *game)
 
 void add_ball(game_t *game)
 {
+    int x;
+
     if (game == NULL)
         return;
+    x = rand() % game->videoMode.width;
     game->count += 1;
     if (game->count > game->allocated) {
         game->allocated += 10;
@@ -69,7 +71,7 @@ void add_ball(game_t *game)
     }
     if (game->balls == NULL)
         return;
-    ball_create(game->balls + game->count - 1, 100);
+    ball_create(game->balls + game->count - 1, x);
 }
 
 void balls_render(game_t *game)
