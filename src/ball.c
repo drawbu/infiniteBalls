@@ -18,9 +18,8 @@ void ball_free(ball_t *ball)
 }
 
 static
-ball_t *ball_create(ball_t *ball, uint32_t x)
+ball_t *ball_create(ball_t *ball, sfVector2f pos)
 {
-    sfVector2f pos = { x, 20 };
     sfColor color = { 100, 250, 50, 255 };
 
     if (ball == NULL)
@@ -38,16 +37,22 @@ ball_t *ball_create(ball_t *ball, uint32_t x)
 }
 
 static
-void ball_render(ball_t *ball, game_t *game)
+void ball_render(uint32_t index, game_t *game)
 {
-    sfVector2f pos = sfCircleShape_getPosition(ball->circle);
-    float radius = sfCircleShape_getRadius(ball->circle);
+    sfVector2f pos;
+    float radius;
+    ball_t *ball = game->balls + index;
 
+    if (ball == NULL || game == NULL)
+        return;
+    pos = sfCircleShape_getPosition(ball->circle);
+    radius = sfCircleShape_getRadius(ball->circle);
     if (pos.y <= 0)
         ball->speed = -ball->speed;
     else if (pos.y + radius >= game->videoMode.height) {
         ball->speed = -ball->speed;
         add_ball(game);
+        ball = game->balls + index;
     }
     pos.y += ball->speed;
     sfCircleShape_setPosition(ball->circle, pos);
@@ -56,22 +61,20 @@ void ball_render(ball_t *ball, game_t *game)
 
 void add_ball(game_t *game)
 {
-    int x;
+    sfVector2f pos;
 
     if (game == NULL)
         return;
-    x = rand() % game->videoMode.width;
+    pos.x = rand() % game->videoMode.width;
+    pos.y = 1 + rand() % 20;
     game->count += 1;
     if (game->count > game->allocated) {
         game->allocated += 10;
-        if (game->balls == NULL)
-            game->balls = malloc(game->allocated * sizeof(ball_t));
-        else
-            game->balls = realloc(game->balls, game->allocated * sizeof(ball_t));
+        game->balls = reallocarray(game->balls, game->allocated, sizeof(ball_t));
     }
     if (game->balls == NULL)
         return;
-    ball_create(game->balls + game->count - 1, x);
+    ball_create(game->balls + game->count - 1, pos);
 }
 
 void balls_render(game_t *game)
@@ -79,5 +82,5 @@ void balls_render(game_t *game)
     if (game == NULL || game->balls == NULL || game->window == NULL)
         return;
     for (uint32_t i = 0; i < game->count; i++)
-        ball_render(game->balls + i, game);
+        ball_render(i, game);
 }
