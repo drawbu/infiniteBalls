@@ -95,10 +95,10 @@ int main(void)
     srand(time(NULL));
     init_game(&game);
     if (game.window == NULL || game.clock == NULL) {
-        free_balls(&game);
+        free_game(&game);
         return EXIT_FAILURE;
     }
     game_run(&game);
-    free_balls(&game);
+    free_game(&game);
     return EXIT_SUCCESS;
 }

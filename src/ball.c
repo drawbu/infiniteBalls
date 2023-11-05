@@ -14,8 +14,6 @@ void ball_free(ball_t *ball)
         return;
     if (ball->circle != NULL)
         sfCircleShape_destroy(ball->circle);
-    free(ball);
-    return;
 }
 
 static
