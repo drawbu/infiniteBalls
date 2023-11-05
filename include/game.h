@@ -16,13 +16,12 @@ typedef struct {
     sfRenderWindow *window;
     ball_t *balls;
     uint32_t count;
-    uint32_t allocated;
+    uint32_t size;
     sfClock *clock;
 } game_t;
 
-typedef void * null_t;
-
 void add_ball(game_t *game);
-void balls_render(game_t *game);
+void render_balls(game_t *game);
+void free_balls(game_t *game);
 
 #endif /* BALL_H_ */

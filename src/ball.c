@@ -74,19 +74,28 @@ void add_ball(game_t *game)
     pos.y = rand() % 20 + 1;
     game->count += 1;
     printf("%d\tballs\n", game->count);
-    if (game->count > game->allocated) {
-        game->allocated += 10;
-        game->balls = reallocarray(game->balls, game->allocated, sizeof(ball_t));
+    if (game->count > game->size) {
+        game->size += 10;
+        game->balls = reallocarray(game->balls, game->size, sizeof(ball_t));
     }
-    if (game->balls == NULL)
-        return;
     ball_create(game->balls + game->count - 1, pos, color);
 }
 
-void balls_render(game_t *game)
+void render_balls(game_t *game)
 {
     if (game == NULL || game->balls == NULL || game->window == NULL)
         return;
     for (uint32_t i = 0; i < game->count; i++)
         ball_render(i, game);
+}
+
+void free_balls(game_t *game)
+{
+    if (game == NULL || game->balls == NULL)
+        return;
+    for (uint32_t i = 0; i < game->count; i++)
+        ball_free(game->balls + i);
+    free(game->balls);
+    game->count = 0;
+    game->size = 0;
 }

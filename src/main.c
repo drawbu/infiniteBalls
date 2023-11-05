@@ -47,34 +47,58 @@ void game_run(game_t *game)
     while (sfRenderWindow_isOpen(game->window)) {
         handle_events(game->window);
         sfRenderWindow_clear(game->window, sfBlack);
-        balls_render(game);
+        render_balls(game);
         sfRenderWindow_display(game->window);
         handle_fps(game->clock);
     }
 }
 
-int main(void)
+static
+void free_game(game_t *game)
 {
-    game_t game = {
+    if (game == NULL)
+        return;
+    if (game->clock != NULL)
+        sfClock_destroy(game->clock);
+    if (game->window != NULL)
+        sfRenderWindow_destroy(game->window);
+    if (game->balls != NULL)
+        free_balls(game);
+}
+
+static
+void init_game(game_t *game)
+{
+    if (game == NULL)
+        return;
+    *game = (game_t) {
         .videoMode = { 800, 600, 32 },
         .videoStyle = sfClose,
         .window = NULL,
         .balls = NULL,
         .count = 0,
-        .allocated = 0,
+        .size = 0,
         .clock = sfClock_create()
     };
+    game->window = sfRenderWindow_create(
+        game->videoMode,
+        "game",
+        game->videoStyle,
+        NULL
+    );
+}
 
-    if (!game.clock)
-        return EXIT_FAILURE;
+int main(void)
+{
+    game_t game = { 0 };
+
     srand(time(NULL));
-    game.window = sfRenderWindow_create(game.videoMode, "game", game.videoStyle, NULL);
-    if (game.window == NULL) {
-        sfClock_destroy(game.clock);
+    init_game(&game);
+    if (game.window == NULL || game.clock == NULL) {
+        free_balls(&game);
         return EXIT_FAILURE;
     }
     game_run(&game);
-    sfRenderWindow_destroy(game.window);
-    sfClock_destroy(game.clock);
+    free_balls(&game);
     return EXIT_SUCCESS;
 }
