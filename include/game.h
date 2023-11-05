@@ -18,6 +18,7 @@ typedef struct {
     uint32_t count;
     uint32_t size;
     sfClock *clock;
+    uint32_t fps;
 } game_t;
 
 void add_ball(game_t *game);

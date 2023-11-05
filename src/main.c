@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -11,18 +12,22 @@
 #include "game.h"
 
 static
-void handle_fps(sfClock *clock)
+void handle_fps(game_t *game)
 {
-    static sfUint64 last_fps_update = 0;
-    static unsigned short frame_count = 0;
-    sfTime time = sfClock_getElapsedTime(clock);
-    sfUint64 ms = time.microseconds;
-    sfUint64 elapsed = ms - last_fps_update;
+    static uint64_t last_fps_update = 0;
+    static uint16_t frame_count = 0;
+    sfTime time = sfClock_getElapsedTime(game->clock);
+    uint64_t ms = time.microseconds;
+    uint64_t elapsed = ms - last_fps_update;
 
     frame_count++;
     if (elapsed < 1000000)
         return;
-    printf("[%llu µs] FPS: %hu\n", ms, frame_count);
+    printf(
+        "[%-9lu µs]\tFPS: %-5hu\tBALLS: %u\n",
+        ms, frame_count, game->count
+    );
+    game->fps = frame_count;
     last_fps_update = ms;
     frame_count = 0;
 }
@@ -49,7 +54,7 @@ void game_run(game_t *game)
         sfRenderWindow_clear(game->window, sfBlack);
         render_balls(game);
         sfRenderWindow_display(game->window);
-        handle_fps(game->clock);
+        handle_fps(game);
     }
 }
 
@@ -78,6 +83,7 @@ void init_game(game_t *game)
         .balls = NULL,
         .count = 0,
         .size = 0,
+        .fps = 0,
         .clock = sfClock_create()
     };
     game->window = sfRenderWindow_create(

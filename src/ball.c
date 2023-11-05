@@ -71,7 +71,6 @@ void add_ball(game_t *game)
     pos.x = rand() % game->videoMode.width;
     pos.y = rand() % 20 + 1;
     game->count += 1;
-    printf("%d\tballs\n", game->count);
     if (game->count > game->size) {
         game->size += 10;
         game->balls = reallocarray(game->balls, game->size, sizeof(ball_t));
