@@ -17,6 +17,7 @@ typedef struct {
     ball_t *balls;
     uint32_t count;
     uint32_t allocated;
+    sfClock *clock;
 } game_t;
 
 typedef void * null_t;
