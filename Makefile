@@ -35,9 +35,9 @@ DEPS := $(OBJ:.o=.d)
 
 DIE := exit 1
 
-all: $(NAME)
-
+.DEFAULT_GOAL := all
 .PHONY: all
+all: $(NAME)
 
 # ↓ Compiling
 $(BUILD_DIR)/%.o: %.c
@@ -47,20 +47,24 @@ $(BUILD_DIR)/%.o: %.c
 $(NAME): $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) || $(DIE)
 
-.PHONY: $(NAME)
-
 # ↓ Cleaning
+.PHONY: clean
 clean:
 	@ $(RM) $(OBJ)
 
+.PHONY: fclean
 fclean: clean
 	@ $(RM) -r $(BUILD_DIR)
 	@ $(RM) $(NAME)
 
-.PHONY: clean fclean
 
+.NOTPARALLEL: re
+.PHONY: re
 re: fclean all
 
-.PHONY: re
+.PHONY: install
+install: PREFIX ?= /usr/local/bin
+install: $(NAME)
+	install -D $< $(PREFIX)/$< --mode 0755
 
 -include $(DEPS)

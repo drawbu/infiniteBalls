@@ -6,54 +6,31 @@
     utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, utils }:
-    utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = nixpkgs.legacyPackages.${system};
-        cc = pkgs.gcc12;
-
-        deps = with pkgs; [
-          glibc
-          gnumake
-          csfml
-        ] ++ [ cc ];
-
-        mkCApp = name: pkgs.stdenv.mkDerivation rec {
-          inherit name;
+  outputs = {self, ...} @ inputs:
+    inputs.utils.lib.eachDefaultSystem (system: let
+      pkgs = import inputs.nixpkgs {inherit system;};
+    in {
+      formatter = pkgs.alejandra;
+      devShells.default = pkgs.mkShell {
+        inputsFrom = builtins.attrValues self.packages.${system};
+        env.MAKEFLAGS = "-j$(nproc)";
+        packages = with pkgs; [
+          valgrind
+          man-pages
+          man-pages-posix
+        ];
+      };
+      packages = {
+        default = pkgs.stdenv.mkDerivation {
+          name = "infiniteBalls";
           src = ./.;
 
-          makeFlags = [ "CC=${cc}/bin/gcc" ];
-          buildInputs = deps;
-
-          hardeningDisable = [ "format" "fortify" ];
+          makeFlags = [ "PREFIX=${placeholder "out"}/bin" ];
+          nativeBuildInputs = with pkgs; [pkg-config];
+          buildInputs = with pkgs; [csfml];
           enableParallelBuilding = true;
-
-          buildPhase = ''
-            make ${name} NO_COV=1
-          '';
-
-          installPhase = ''
-            mkdir -p $out/bin
-            cp ${name} $out/bin
-          '';
         };
-
-      in
-      {
-        devShells.default = pkgs.mkShell {
-          packages = with pkgs; [
-            gcovr
-            ltrace
-            valgrind
-            python311Packages.compiledb
-            man-pages
-            man-pages-posix
-          ] ++ deps;
-        };
-
-        formatter = pkgs.nixpkgs-fmt;
-        packages = {
-          default = mkCApp "infiniteBalls";
-        };
-      });
+        infiniteBalls = self.packages.${system}.default;
+      };
+    });
 }
