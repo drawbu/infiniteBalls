@@ -73,7 +73,7 @@ void add_ball(game_t *game)
     game->count += 1;
     if (game->count > game->size) {
         game->size += 10;
-        game->balls = reallocarray(game->balls, game->size, sizeof(ball_t));
+        game->balls = realloc(game->balls, game->size * sizeof(ball_t));
     }
     ball_create(game->balls + game->count - 1, pos, color);
 }

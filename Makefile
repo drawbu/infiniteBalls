@@ -1,21 +1,21 @@
 # ↓ Basic variables
 CC := gcc -std=gnu11
-CFLAGS := -W -Wall -Wextra -Wunused -Wpedantic
+CFLAGS :=  -std=gnu11 -W -Wall -Wextra -Wunused -Wpedantic
 CFLAGS += -Wundef -Wshadow -Wcast-align
 CFLAGS += -Wstrict-prototypes -Wmissing-prototypes
 CFLAGS += -Wcast-qual
 CFLAGS += -Wunreachable-code
 CFLAGS += -U_FORTIFY_SOURCE
 CFLAGS += -iquote ./include
-CFLAGS += -Ofast -march=native -mtune=native -flto
+CFLAGS += -Ofast -march=native -mtune=native
+LDFLAGS ?=
 
 # ↓ CSFML
-CSFML_FLAGS := -lm
-CSFML_FLAGS += -lcsfml-window
-CSFML_FLAGS += -lcsfml-system
-CSFML_FLAGS += -lcsfml-graphics
-CSFML_FLAGS += -lcsfml-audio
-CFLAGS += $(CSFML_FLAGS)
+LDFLAGS += -lm
+LDFLAGS += -lcsfml-window
+LDFLAGS += -lcsfml-system
+LDFLAGS += -lcsfml-graphics
+LDFLAGS += -lcsfml-audio
 
 # ↓ Binaries
 NAME := infiniteBalls
@@ -33,8 +33,6 @@ OBJ := $(SRC:%.c=$(BUILD_DIR)/%.o)
 DEPS_FLAGS := -MMD -MP
 DEPS := $(OBJ:.o=.d)
 
-DIE := exit 1
-
 .DEFAULT_GOAL := all
 .PHONY: all
 all: $(NAME)
@@ -42,20 +40,20 @@ all: $(NAME)
 # ↓ Compiling
 $(BUILD_DIR)/%.o: %.c
 	@ mkdir -p $(dir $@)
-	$(CC) -o $@ -c $< $(CFLAGS) $(DEPS_FLAGS) || $(DIE)
+	$(CC) -o $@ -c $< $(CFLAGS) $(DEPS_FLAGS)
 
 $(NAME): $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS) || $(DIE)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
 
 # ↓ Cleaning
 .PHONY: clean
 clean:
-	@ $(RM) $(OBJ)
+	$(RM) $(OBJ)
 
 .PHONY: fclean
 fclean: clean
-	@ $(RM) -r $(BUILD_DIR)
-	@ $(RM) $(NAME)
+	$(RM) -r $(BUILD_DIR)
+	$(RM) $(NAME)
 
 
 .NOTPARALLEL: re

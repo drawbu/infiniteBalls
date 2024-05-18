@@ -17,7 +17,7 @@ void handle_fps(game_t *game)
     static uint64_t last_fps_update = 0;
     static uint16_t frame_count = 0;
     sfTime time = sfClock_getElapsedTime(game->clock);
-    uint64_t ms = time.microseconds;
+    unsigned long ms = time.microseconds;
     uint64_t elapsed = ms - last_fps_update;
 
     frame_count++;

@@ -8,6 +8,7 @@ infiniteBalls
 *.o
 include/my.h
 include/my_printf.h
+result
 
 # Editors junk
 *~

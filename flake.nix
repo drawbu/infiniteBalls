@@ -1,6 +1,4 @@
 {
-  description = "infiniteBalls";
-
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
     utils.url = "github:numtide/flake-utils";
@@ -14,7 +12,7 @@
       devShells.default = pkgs.mkShell {
         inputsFrom = builtins.attrValues self.packages.${system};
         env.MAKEFLAGS = "-j$(nproc)";
-        packages = with pkgs; [
+        packages = with pkgs; [] ++ lib.optionals stdenv.isLinux [
           valgrind
           man-pages
           man-pages-posix
